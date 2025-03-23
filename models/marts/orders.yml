@@ -1,0 +1,29 @@
+version: 2
+
+semantic_models:
+  - name: orders
+    description: |
+      注文データを含むモデル。テーブルの粒度は注文IDです。
+    model: ref('stg_orders')
+    entities:
+      - name: order_id
+        type: primary
+      - name: location
+        type: foreign
+        expr: location_id
+      - name: customer
+        type: foreign
+        expr: customer_id
+    dimensions:
+      - name: ordered_at
+        expr: date_trunc('day', ordered_at)
+        type: time
+        type_params:
+          time_granularity: day
+measures:
+  - name: order_total
+    description: 税金を含む各注文の合計金額。
+    agg: sum
+  - name: tax_paid
+    description: 各注文で支払われた総税額。
+    agg: sum
